@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WFO Calculator | Terminal</title>
     <style>
         :root {
@@ -14,36 +14,46 @@
             background-color: var(--term-bg);
             color: var(--term-green);
             font-family: 'Courier New', Courier, monospace;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
+            min-height: 100vh;
+            /* Ensures tapping anywhere works for mobile focus */
+            cursor: text;
         }
 
-        #terminal {
-            width: 90%;
+        #terminal-box {
+            width: 95%;
             max-width: 650px;
             background: #000;
             padding: 25px;
             border: 1px solid #333;
             box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
             border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
         }
 
-        .output { margin-bottom: 8px; white-space: pre-wrap; line-height: 1.4; }
+        #history-container {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .output { margin-bottom: 8px; white-space: pre-wrap; line-height: 1.4; font-size: 14px; }
         
         .input-line { 
             display: flex; 
+            flex-wrap: wrap;
             align-items: flex-start; 
             margin-top: 10px;
         }
 
         .prompt { 
-            margin-right: 10px; 
-            white-space: nowrap;
+            margin-right: 8px; 
             color: var(--term-green);
+            font-size: 14px;
         }
         
         input {
@@ -51,13 +61,15 @@
             border: none;
             color: var(--term-green);
             font-family: inherit;
-            font-size: inherit;
+            font-size: 16px; /* 16px prevents iOS zoom */
             outline: none;
-            width: 100%;
+            flex: 1;
+            min-width: 150px;
             caret-color: var(--term-green);
+            padding: 0;
+            margin: 0;
         }
 
-        /* Hides the label from view but keeps it for screen readers */
         .visually-hidden {
             position: absolute;
             width: 1px;
@@ -69,41 +81,55 @@
             border: 0;
         }
 
-        .highlight { color: #fff; font-weight: bold; }
+        #mobile-hint {
+            font-size: 10px;
+            opacity: 0.4;
+            text-align: center;
+            margin-top: 15px;
+            display: none; /* Hidden by default */
+        }
+
+        /* Show hint only on small screens */
+        @media (max-width: 600px) {
+            #mobile-hint { display: block; }
+            #terminal-box { height: 95vh; width: 100%; border: none; }
+        }
     </style>
 </head>
-<body>
+<body onclick="document.getElementById('user-input').focus()">
 
-<main id="terminal">
-    <div id="history">
-        <div class="output">--- Corporate WFO Percentage Calculator ---</div>
+<main id="terminal-box">
+    <div id="history-container">
+        <div id="history">
+            <div class="output">--- Corporate WFO Percentage Calculator ---</div>
+        </div>
+        
+        <div class="input-line">
+            <label for="user-input" class="visually-hidden">Terminal Input</label>
+            <span class="prompt" id="current-prompt">Enter Month & Year (e.g., March 2026):</span>
+            <input 
+                type="text" 
+                id="user-input" 
+                title="Terminal Input Field"
+                inputmode="text"
+                enterkeyhint="done"
+                placeholder="Type here..."
+                autofocus 
+                autocomplete="off"
+            >
+        </div>
     </div>
-    
-    <div class="input-line">
-        <label for="user-input" class="visually-hidden">Terminal Input</label>
-        <span class="prompt" id="current-prompt">Enter Month & Year (e.g., March 2026):</span>
-        <input 
-            type="text" 
-            id="user-input" 
-            title="Terminal Input Field"
-            placeholder="Type here..."
-            autofocus 
-            autocomplete="off"
-        >
-    </div>
+    <div id="mobile-hint">[ Tap anywhere to open keyboard ]</div>
 </main>
 
 <script>
     const history = document.getElementById('history');
     const userInput = document.getElementById('user-input');
     const promptText = document.getElementById('current-prompt');
+    const historyContainer = document.getElementById('history-container');
 
     let step = 0;
-    let data = {
-        monthYear: '',
-        targetPercent: 0,
-        leaveInput: ''
-    };
+    let data = { monthYear: '', targetPercent: 0, leaveInput: '' };
 
     const prompts = [
         "Enter Month & Year (e.g., March 2026):",
@@ -111,17 +137,19 @@
         "Enter leave dates (e.g., 2,3,4) OR total count:"
     ];
 
-    // Initial Accessibility Sync
     userInput.setAttribute('aria-label', prompts[0]);
 
     userInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const val = userInput.value.trim();
-            if (!val && step < 2) return; // Prevent empty submits for first two steps
+            if (!val && step < 2) return;
 
             logToTerminal(`${prompts[step]} ${val}`);
             processInput(val);
             userInput.value = '';
+            
+            // Focus hack for mobile
+            setTimeout(() => userInput.focus(), 10);
         }
     });
 
@@ -130,8 +158,8 @@
         div.className = 'output';
         div.textContent = text;
         history.appendChild(div);
-        // Scroll to bottom
-        window.scrollTo(0, document.body.scrollHeight);
+        // Scroll inside the terminal box
+        historyContainer.scrollTop = historyContainer.scrollHeight;
     }
 
     function processInput(val) {
@@ -146,25 +174,17 @@
             calculateResult();
             return;
         }
-        
-        // Update UI and Accessibility Label
         promptText.textContent = prompts[step];
         userInput.setAttribute('aria-label', prompts[step]);
     }
 
     function calculateResult() {
         try {
-            // Logic derived from calculate.mjs
             const parts = data.monthYear.split(' ');
-            if (parts.length < 2) throw new Error("Invalid Format");
-
             const monthName = parts[0];
             const yearNum = parseInt(parts[1]);
             const dateObj = new Date(`${monthName} 1, ${yearNum}`);
             const monthIndex = dateObj.getMonth();
-            
-            if (isNaN(monthIndex)) throw new Error("Invalid Month");
-
             const daysInMonth = new Date(yearNum, monthIndex + 1, 0).getDate();
 
             let specificLeaveDates = [];
@@ -180,39 +200,28 @@
             for (let d = 1; d <= daysInMonth; d++) {
                 const date = new Date(yearNum, monthIndex, d);
                 const dayOfWeek = date.getDay();
-                const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6); // 0=Sun, 6=Sat
-                const isSpecificLeave = specificLeaveDates.includes(d);
-
-                if (!isWeekend && !isSpecificLeave) {
+                if (dayOfWeek !== 0 && dayOfWeek !== 6 && !specificLeaveDates.includes(d)) {
                     netWorkingDays++;
                 }
             }
 
-            if (specificLeaveDates.length === 0) {
-                netWorkingDays -= manualLeaveCount;
-            }
+            if (specificLeaveDates.length === 0) netWorkingDays -= manualLeaveCount;
 
-            // Standard policy rounding (Math.ceil)
             const daysRequired = Math.ceil((data.targetPercent / 100) * netWorkingDays);
 
-            // Display Results
-            logToTerminal("\n" + "=".repeat(30));
-            logToTerminal(`Month:            ${monthName} ${yearNum}`);
-            logToTerminal(`Working Days:     ${netWorkingDays} (Excl. Weekends/Leaves)`);
-            logToTerminal(`Policy Target:    ${data.targetPercent}%`);
-            logToTerminal("-".repeat(30));
-            logToTerminal(`DAYS TO BE IN OFFICE: ${daysRequired}`);
-            logToTerminal("=".repeat(30));
+            logToTerminal("\n" + "=".repeat(25));
+            logToTerminal(`Month:        ${monthName} ${yearNum}`);
+            logToTerminal(`Work Days:    ${netWorkingDays}`);
+            logToTerminal(`Target:       ${data.targetPercent}%`);
+            logToTerminal("-".repeat(25));
+            logToTerminal(`OFFICE DAYS:  ${daysRequired}`);
+            logToTerminal("=".repeat(25));
             
-            logToTerminal("\nCalculation complete. Refresh (F5) to start over.");
-            
-            // Hide input line after completion
             document.querySelector('.input-line').style.display = 'none';
+            document.getElementById('mobile-hint').style.display = 'none';
 
         } catch (err) {
-            logToTerminal("!! Error: Check your input format (e.g., 'March 2026') and try again.");
-            logToTerminal("Refresh to restart.");
-            document.querySelector('.input-line').style.display = 'none';
+            logToTerminal("!! Error. Refresh and try again.");
         }
     }
 </script>
