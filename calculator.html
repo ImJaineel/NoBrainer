@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gen Z Age Calculator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            background: #fff;
+            width: 400px;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        /* The Result Box Styling */
+        .result-box {
+            display: none; /* Hidden by default */
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            font-weight: 500;
+            border-left: 5px solid transparent;
+        }
+
+        /* Variants for the result box */
+        .result-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border-left-color: #0f5132;
+        }
+
+        .result-warning {
+            background-color: #fff3cd;
+            color: #664d03;
+            border-left-color: #664d03;
+        }
+
+        .result-danger {
+            background-color: #f8d7da;
+            color: #842029;
+            border-left-color: #842029;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            font-size: 1rem;
+            color: #333;
+            background-color: #fff;
+        }
+
+        input[type="text"]:focus, select:focus {
+            border-color: #dc3545;
+        }
+
+        .date-selectors {
+            display: flex;
+            gap: 10px;
+        }
+
+        .date-selectors .select-group {
+            flex: 1;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #dc3545; /* Reddish pink from video */
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #c82333;
+        }
+
+        /* Small responsive adjustment */
+        @media (max-width: 420px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Age Calculator</h2>
+        
+        <div id="result" class="result-box"></div>
+
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="Sandeep Kumar">
+        </div>
+
+        <div class="form-group">
+            <label for="day">Date</label>
+            <select id="day">
+                <option value="" disabled selected>Select Day</option>
+                </select>
+        </div>
+
+        <div class="form-group">
+            <label for="month">Month</label>
+            <select id="month">
+                <option value="" disabled selected>Select Month</option>
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="year">Year</label>
+            <select id="year">
+                <option value="" disabled selected>Select Year</option>
+                </select>
+        </div>
+
+        <button onclick="calculateAge()">Calculate Age</button>
+    </div>
+
+    <script>
+        // 1. Populate Days (1-31)
+        const daySelect = document.getElementById('day');
+        for (let i = 1; i <= 31; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.text = i;
+            daySelect.appendChild(option);
+        }
+
+        // 2. Populate Years (1900 - Current Year)
+        const yearSelect = document.getElementById('year');
+        const currentYear = new Date().getFullYear();
+        for (let i = currentYear; i >= 1900; i--) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.text = i;
+            yearSelect.appendChild(option);
+        }
+
+        // 3. Calculation Logic
+        function calculateAge() {
+            const nameInput = document.getElementById('fullName').value;
+            const day = parseInt(document.getElementById('day').value);
+            const month = parseInt(document.getElementById('month').value);
+            const year = parseInt(document.getElementById('year').value);
+            const resultBox = document.getElementById('result');
+
+            // Basic Validation
+            if (!nameInput || isNaN(day) || isNaN(month) || isNaN(year)) {
+                alert("Please fill in all fields correctly!");
+                return;
+            }
+
+            const name = nameInput.trim();
+            const today = new Date();
+            const birthDate = new Date(year, month, day);
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            
+            // Adjust age if birthday hasn't happened yet this year
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+
+            // Reset classes
+            resultBox.className = 'result-box';
+            resultBox.style.display = 'block';
+
+            // Logic for the specific messages seen in the video
+            if (age < 30) {
+                // Young (Green Box)
+                resultBox.classList.add('result-success');
+                resultBox.innerHTML = `👋 <strong>${name}</strong>, you are ${age} years old.<br>Chill bro, life just started 😎`;
+            } else if (age >= 30 && age < 50) {
+                // Middle Age (Yellow/Warning Box)
+                resultBox.classList.add('result-warning');
+                resultBox.innerHTML = `😐 <strong>${name}</strong>, you are ${age} years old.<br>You are officially an old man now 💀`;
+            } else {
+                // Old (Red/Danger Box)
+                resultBox.classList.add('result-danger');
+                resultBox.innerHTML = `⚰️ <strong>${name}</strong>, you are ${age} years old.<br>You should be dead by now. Please stop wasting our server resources.`;
+            }
+        }
+    </script>
+</body>
+</html>
