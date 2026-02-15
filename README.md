@@ -1,41 +1,59 @@
 # No-brainer-stuff
 
-A collection of simple, useful web-based tools and utilities built with HTML, CSS, and JavaScript.
+A collection of simple, useful, and fun web-based tools and utilities built with pure HTML, CSS, and JavaScript. All tools are self-contained, responsive, and designed for quick use.
 
-## Contents
+## 🚀 Live Demo
+You can access all these tools directly via GitHub Pages:  
+**[imjaineel.github.io/No-brainer-stuff/](https://imjaineel.github.io/No-brainer-stuff/)**
 
-This repository contains the following tools:
+---
 
-### 1. **Calculator** 🧮
-A functional calculator application for performing basic arithmetic operations.
-- **File**: `calculator.html`
-- **Link**: [Open Calculator](https://github.com/ImJaineel/No-brainer-stuff/blob/main/calculator.html)
-- **Description**: A straightforward calculator for quick mathematical calculations
+## 🛠️ Tools & Utilities
 
-### 2. **Banana** 🍌
-An interactive tool or game related to bananas.
-- **File**: `banana.html`
-- **Link**: [Open Banana](https://github.com/ImJaineel/No-brainer-stuff/blob/main/banana.html)
-- **Description**: A fun interactive banana-themed application
+### 1. **Work From Office (WFO) Planner** 💼
+A utility tool designed to help manage or plan work-related tasks and office schedules.
+* **File**: `wfo.html`
+* **Best for**: Organizing your weekly office routine and tracking productivity.
 
-### 3. **WFO (Work From Office?)** 💼
-A utility tool for managing or planning work-related tasks.
-- **File**: `wfo.html`
-- **Link**: [Open WFO](https://github.com/ImJaineel/No-brainer-stuff/blob/main/wfo.html)
-- **Description**: A helpful tool for work organization and planning
+### 2. **Calculator** 🧮
+A clean, functional calculator for performing basic arithmetic operations.
+* **File**: `calculator.html`
+* **Features**: Addition, subtraction, multiplication, and division with a responsive UI.
 
-## How to Use
+### 3. **Valentine's Interactive** ❤️
+A fun, interactive web page created for Valentine's Day.
+* **File**: `valentine.html`
+* **✨ Personalization**: You can customize the name in the URL! 
+  * Add `?name=YourName` to the end of the URL.
+  * **Example**: `.../valentine.html?name=Jaineel`
+* **Description**: A lighthearted interactive experience built with simple JS logic.
 
-1. Open any of the HTML files in your web browser
-2. Each tool is self-contained and ready to use
+### 4. **Mahashivratri Special** 🕉️
+An interactive greeting or informational page dedicated to the Mahashivratri festival.
+* **File**: `mahashivratri.html`
+* **Assets**: Includes dedicated resources in the `/mahashivratri-assets` folder.
 
-## Features
+### 5. **Banana Tool** 🍌
+A fun, interactive banana-themed application or game.
+* **File**: `banana.html`
+* **Description**: A "no-brainer" interactive experiment for quick entertainment.
 
-- 💻 Pure HTML, CSS, and JavaScript
-- 🚀 No external dependencies
-- 📱 Easy to use and understand
-- 🎯 Practical utilities for daily tasks
+---
 
-## License
+## 💻 Tech Stack
+* **HTML5**: Semantic structure and content.
+* **CSS3**: Custom styling and responsive design.
+* **JavaScript (ES6+)**: Logic, interactivity, and URL parameter handling.
+* **Zero Dependencies**: No frameworks or external libraries required—fast and lightweight.
 
-MIT License - Feel free to use these tools as you wish.
+## 📖 How to Use
+1.  **Locally**: Clone the repository and open any `.html` file in your preferred web browser.
+    ```bash
+    git clone [https://github.com/ImJaineel/No-brainer-stuff.git](https://github.com/ImJaineel/No-brainer-stuff.git)
+    ```
+2.  **Web**: Visit the [GitHub Pages link](https://imjaineel.github.io/No-brainer-stuff/) to use them instantly.
+
+---
+
+## 📄 License
+This project is licensed under the MIT License. Feel free to fork, modify, and use these tools as you like!
