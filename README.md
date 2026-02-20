@@ -15,10 +15,10 @@ A utility tool designed to help manage or plan work-related tasks and office sch
 * **File**: [`wfo.html`](./wfo.html)
 * **Best for**: Organizing your weekly office routine and tracking productivity.
 
-### 2. **Calculator** 🧮
-A clean, functional calculator for performing basic arithmetic operations.
+### 2. **Age Calculator** 🧮
+A clean, functional calculator for calculating age.
 * **File**: [`calculator.html`](./calculator.html)
-* **Features**: Addition, subtraction, multiplication, and division with a responsive UI.
+* **Features**: calculate age with a responsive UI.
 
 ### 3. **Valentine's Interactive** ❤️
 A fun, interactive web page created for Valentine's Day.
